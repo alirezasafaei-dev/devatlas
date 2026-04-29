@@ -25,6 +25,7 @@
     "agent:context": "node scripts/agent-context.mjs",
     "agent:github": "node scripts/github-hub.mjs",
     "agent:deepseek": "python3 scripts/deepseek-review.py",
+    "agent:deepseek:local": "python3 scripts/deepseek-review.py --provider local",
     "agent:inventory": "python3 scripts/github-inventory.py",
     "agent:autopilot": "pnpm doctor && pnpm agent:github status --json && pnpm agent:inventory --json",
     "agent:ops": "node scripts/agent-ops.mjs",
@@ -50,7 +51,11 @@
     "staging:data": "node scripts/staging-data-rehearsal.mjs",
     "staging:readiness": "node scripts/staging-readiness.mjs",
     "agent:vps": "node scripts/vps-audit.mjs",
-    "agent:preflight": "node scripts/agent-preflight.mjs"
+    "agent:preflight": "node scripts/agent-preflight.mjs",
+    "agent:local:chat": "node scripts/local-llm.mjs chat",
+    "agent:local:embed": "node scripts/local-llm.mjs embed",
+    "agent:local:smoke": "node scripts/local-llm.mjs smoke",
+    "agent:local:smoke:embed": "node scripts/local-llm.mjs smoke --mode=embed"
   },
   "devDependencies": {
     "@commitlint/cli": "20.5.0",

@@ -60,20 +60,27 @@ def gather_payload(args, env: dict[str, str]) -> str:
         return ""
 
 
-def call_deepseek(api_key: str, model: str, prompt: str, max_tokens: int = 1200) -> str:
-    base_url = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
+def call_chat_completion(
+    base_url: str,
+    model: str,
+    prompt: str,
+    max_tokens: int = 1200,
+    api_key: str = "",
+    system_prompt: str = "You are a concise technical reviewer for a TypeScript/NestJS/Next.js monorepo.",
+) -> str:
     url = f"{base_url.rstrip('/')}/chat/completions"
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {api_key}",
     }
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
 
     body = {
         "model": model,
         "messages": [
             {
                 "role": "system",
-                "content": "You are a concise technical reviewer for a TypeScript/NestJS/Next.js monorepo.",
+                "content": system_prompt,
             },
             {
                 "role": "user",
@@ -104,15 +111,40 @@ def main() -> int:
     parser.add_argument("--api-base", default="", help="Optional override: API base URL")
     parser.add_argument("--model", default="", help="Model override")
     parser.add_argument("--max-tokens", type=int, default=1200)
+    parser.add_argument("--provider", default="auto", choices=["auto", "deepseek", "local"])
+    parser.add_argument("--local-base", default="", help="Optional override for local OpenAI-compatible base URL")
     args = parser.parse_args()
 
     env = parse_env_file(ROOT / ".env.local")
     api_key = os.environ.get("DEEPSEEK_API_KEY") or env.get("DEEPSEEK_API_KEY")
-    model = args.model or os.environ.get("DEEPSEEK_MODEL") or env.get("DEEPSEEK_MODEL") or "deepseek-chat"
+    local_base = (
+        args.local_base
+        or os.environ.get("LOCAL_REVIEW_BASE_URL")
+        or env.get("LOCAL_REVIEW_BASE_URL")
+        or os.environ.get("LOCAL_LLM_BASE_URL")
+        or env.get("LOCAL_LLM_BASE_URL")
+        or "http://127.0.0.1:11435/v1"
+    )
+    local_model = (
+        args.model
+        or os.environ.get("LOCAL_REVIEW_MODEL")
+        or env.get("LOCAL_REVIEW_MODEL")
+        or os.environ.get("LOCAL_LLM_MODEL")
+        or env.get("LOCAL_LLM_MODEL")
+        or "qwen3-4b-thinking"
+    )
+    remote_model = args.model or os.environ.get("DEEPSEEK_MODEL") or env.get("DEEPSEEK_MODEL") or "deepseek-chat"
 
-    if not api_key:
+    provider = args.provider
+    if provider == "auto":
+        if api_key:
+            provider = "deepseek"
+        else:
+            provider = "local"
+
+    if provider == "deepseek" and not api_key:
         print("DEEPSEEK_API_KEY is missing; skip review.")
-        print("Set DEEPSEEK_API_KEY in .env.local and rerun.")
+        print("Set DEEPSEEK_API_KEY in .env.local or use --provider local.")
         return 0
 
     payload_text = gather_payload(args, env)
@@ -130,7 +162,23 @@ def main() -> int:
         os.environ["DEEPSEEK_BASE_URL"] = args.api_base
 
     try:
-        answer = call_deepseek(api_key, model, prompt, args.max_tokens)
+        if provider == "deepseek":
+            answer = call_chat_completion(
+                os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com"),
+                remote_model,
+                prompt,
+                args.max_tokens,
+                api_key=api_key,
+            )
+            model = remote_model
+        else:
+            answer = call_chat_completion(
+                local_base,
+                local_model,
+                prompt,
+                args.max_tokens,
+            )
+            model = local_model
     except Exception as exc:
         if args.json:
             print(json.dumps({"error": str(exc)}))
