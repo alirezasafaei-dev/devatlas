@@ -27,7 +27,7 @@
     "agent:deepseek": "python3 scripts/deepseek-review.py",
     "agent:deepseek:local": "python3 scripts/deepseek-review.py --provider local",
     "agent:inventory": "python3 scripts/github-inventory.py",
-    "agent:autopilot": "pnpm doctor && pnpm agent:github status --json && pnpm agent:inventory --json",
+    "agent:autopilot": "node scripts/agent-autopilot.mjs",
     "agent:ops": "node scripts/agent-ops.mjs",
     "agent:smart": "node scripts/agent-smart.mjs",
     "agent:auto": "node scripts/agent-smart.mjs",

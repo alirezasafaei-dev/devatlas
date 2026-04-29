@@ -69,7 +69,7 @@ async function main() {
     recommendedMode: 'offline',
     recommendedCommand: 'pnpm agent:auto:offline',
     recommendations: [
-      'Run local checks with pnpm agent:auto:offline when token/network is limited.',
+      'Run local checks with pnpm agent:auto:lean when token/network is limited.',
       'Run pnpm agent:tools --json for live capability matrix.',
       'Run pnpm agent:vps --json before any deploy step.',
     ],
@@ -96,7 +96,7 @@ async function main() {
   if (preferOffline) {
     report.recommendations.unshift('Low-token mode active (AGENT_LOW_TOKEN_MODE=1): remote checks and DeepSeek calls are skipped.');
     report.recommendedMode = 'offline';
-    report.recommendedCommand = 'pnpm agent:auto:offline';
+    report.recommendedCommand = 'pnpm agent:auto:lean';
   }
 
   if (outputJson) {
