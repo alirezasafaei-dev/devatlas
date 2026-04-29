@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GapCode Context Manifest",
+  "type": "object",
+  "required": [
+    "generatedAt",
+    "changedFiles",
+    "allowedReadList",
+    "dependencyExpansion",
+    "excludedPatterns",
+    "policySnapshot"
+  ],
+  "properties": {
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "modeHint": { "type": "string" },
+    "diffSource": { "type": "string" },
+    "changedFiles": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "allowedReadList": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "dependencyExpansion": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    },
+    "excludedPatterns": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "policySnapshot": {
+      "type": "object",
+      "required": ["maxDependencyDepth", "maxFilesPerStep", "maxTotalFilesRead"],
+      "properties": {
+        "maxDependencyDepth": { "type": "integer", "minimum": 0 },
+        "maxFilesPerStep": { "type": "integer", "minimum": 1 },
+        "maxTotalFilesRead": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

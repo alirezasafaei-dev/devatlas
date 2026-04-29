@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-04-29T10:18:24.637Z",
+  "scope": "apps/api",
+  "scopeMode": "manual",
+  "diffMode": "working-tree",
+  "changedFiles": 8,
+  "allowedReadList": 37,
+  "dependencyEntries": 12,
+  "maxFilesPerStep": 12,
+  "maxTotalFilesRead": 60,
+  "utilization": {
+    "allowedReadListPct": 61.7,
+    "changedFilesPct": 13.3
+  }
+}

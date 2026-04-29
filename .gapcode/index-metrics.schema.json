@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GapCode Index Metrics",
+  "type": "object",
+  "required": [
+    "generatedAt",
+    "packageManager",
+    "workspaceCount",
+    "appCount",
+    "packageCount",
+    "totalEstimatedFiles",
+    "totalEstimatedDirs",
+    "heavyPathCount",
+    "internalDependencyEdges"
+  ],
+  "properties": {
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "packageManager": { "type": "string" },
+    "workspaceCount": { "type": "integer", "minimum": 0 },
+    "appCount": { "type": "integer", "minimum": 0 },
+    "packageCount": { "type": "integer", "minimum": 0 },
+    "totalEstimatedFiles": { "type": "integer", "minimum": 0 },
+    "totalEstimatedDirs": { "type": "integer", "minimum": 0 },
+    "heavyPathCount": { "type": "integer", "minimum": 0 },
+    "internalDependencyEdges": { "type": "integer", "minimum": 0 }
+  },
+  "additionalProperties": true
+}

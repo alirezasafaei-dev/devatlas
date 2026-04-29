@@ -10,6 +10,15 @@ export class SearchService {
 
   async search(dto: SearchRequestDto): Promise<{ query: string; results: SearchResultItem[]; total: number }> {
     const query = dto.query.trim();
+
+    if (!query) {
+      return {
+        query,
+        results: [],
+        total: 0,
+      };
+    }
+
     const result = await this.repo.search(query, dto.limit);
     const results = result.map((item) => ({
       id: item.id,

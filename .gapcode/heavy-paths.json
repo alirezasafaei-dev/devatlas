@@ -1,0 +1,155 @@
+{
+  "generatedAt": "2026-04-29T10:18:23.785Z",
+  "entries": [
+    {
+      "path": ".git",
+      "reason": "generated/dependency/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": ".turbo",
+      "reason": "generated/dependency/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "node_modules",
+      "reason": "generated/dependency/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "apps/api/.turbo",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "apps/api/dist",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "apps/api/node_modules",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "apps/web/.next",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "apps/web/.turbo",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "apps/web/node_modules",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/api-client/.turbo",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/api-client/dist",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/api-client/node_modules",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/config/.turbo",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/config/dist",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/config/node_modules",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/content/.turbo",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/content/dist",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/content/node_modules",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/types/.turbo",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/types/dist",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/types/node_modules",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/ui/.turbo",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/ui/dist",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/ui/node_modules",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/utils/.turbo",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/utils/dist",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "packages/utils/node_modules",
+      "reason": "nested generated/build directory",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "reason": "lockfile; high token cost with low task value",
+      "mode": "ask-before-read"
+    },
+    {
+      "path": "**/*.map",
+      "reason": "source map artifact",
+      "mode": "always-ignore"
+    },
+    {
+      "path": "**/*.{png,jpg,jpeg,gif,webp,svg,ico,mp4,mov,zip,pdf}",
+      "reason": "binary/media asset",
+      "mode": "ask-before-read"
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "generatedAt": "2026-04-29T10:18:24.217Z",
+  "modeHint": "bootstrap-context",
+  "changedFiles": [
+    "apps/api/.env.example",
+    "apps/api/src/config/configuration.ts",
+    "apps/api/src/config/env.validation.ts",
+    "apps/api/src/modules/search/__tests__/search.service.spec.ts",
+    "apps/api/src/modules/search/dto/search-request.dto.ts",
+    "apps/api/src/modules/search/search.service.ts",
+    "apps/api/src/scripts/ingest-content.spec.ts",
+    "apps/api/src/scripts/ingest-content.ts"
+  ],
+  "allowedReadList": [
+    "apps/api/.env.example",
+    "apps/api/src/app.module.ts",
+    "apps/api/src/common/interceptors/observability.module.ts",
+    "apps/api/src/config/configuration.ts",
+    "apps/api/src/config/env.validation.ts",
+    "apps/api/src/db/schema/ai-answer.ts",
+    "apps/api/src/db/schema/ai-summary.ts",
+    "apps/api/src/db/schema/category.ts",
+    "apps/api/src/db/schema/content-relation.ts",
+    "apps/api/src/db/schema/content-view.ts",
+    "apps/api/src/db/schema/enums.ts",
+    "apps/api/src/db/schema/guide-tag.ts",
+    "apps/api/src/db/schema/guide.ts",
+    "apps/api/src/db/schema/index.ts",
+    "apps/api/src/db/schema/search-document.ts",
+    "apps/api/src/db/schema/search-query.ts",
+    "apps/api/src/db/schema/tag.ts",
+    "apps/api/src/db/schema/tool-tag.ts",
+    "apps/api/src/db/schema/tool.ts",
+    "apps/api/src/modules/ai/ai.module.ts",
+    "apps/api/src/modules/categories/categories.module.ts",
+    "apps/api/src/modules/content-relations/content-relations.module.ts",
+    "apps/api/src/modules/database/database.module.ts",
+    "apps/api/src/modules/database/drizzle.service.ts",
+    "apps/api/src/modules/guides/guides.module.ts",
+    "apps/api/src/modules/health/health.module.ts",
+    "apps/api/src/modules/search/__tests__/search.service.spec.ts",
+    "apps/api/src/modules/search/dto/search-request.dto.ts",
+    "apps/api/src/modules/search/search.module.ts",
+    "apps/api/src/modules/search/search.repository.ts",
+    "apps/api/src/modules/search/search.service.ts",
+    "apps/api/src/modules/tags/tags.module.ts",
+    "apps/api/src/modules/tools/tools.module.ts",
+    "apps/api/src/scripts/ingest-content.spec.ts",
+    "apps/api/src/scripts/ingest-content.ts",
+    "apps/api/src/testing/test-db.ts",
+    "packages/types"
+  ],
+  "dependencyExpansion": {
+    "apps/api/src/config/configuration.ts": [],
+    "apps/api/src/config/env.validation.ts": [],
+    "apps/api/src/modules/search/__tests__/search.service.spec.ts": [
+      "apps/api/src/modules/search/search.repository.ts",
+      "apps/api/src/modules/search/search.service.ts"
+    ],
+    "apps/api/src/modules/search/dto/search-request.dto.ts": [],
+    "apps/api/src/modules/search/search.service.ts": [
+      "apps/api/src/modules/search/dto/search-request.dto.ts",
+      "apps/api/src/modules/search/search.repository.ts",
+      "packages/types"
+    ],
+    "apps/api/src/scripts/ingest-content.spec.ts": [
+      "apps/api/src/db/schema/index.ts",
+      "apps/api/src/testing/test-db.ts"
+    ],
+    "apps/api/src/scripts/ingest-content.ts": [
+      "apps/api/src/app.module.ts",
+      "apps/api/src/db/schema/index.ts",
+      "apps/api/src/modules/database/drizzle.service.ts",
+      "packages/types"
+    ],
+    "apps/api/src/modules/search/search.repository.ts": [
+      "apps/api/src/db/schema/index.ts",
+      "apps/api/src/modules/database/drizzle.service.ts"
+    ],
+    "apps/api/src/db/schema/index.ts": [
+      "apps/api/src/db/schema/ai-answer.ts",
+      "apps/api/src/db/schema/ai-summary.ts",
+      "apps/api/src/db/schema/category.ts",
+      "apps/api/src/db/schema/content-relation.ts",
+      "apps/api/src/db/schema/content-view.ts",
+      "apps/api/src/db/schema/enums.ts",
+      "apps/api/src/db/schema/guide-tag.ts",
+      "apps/api/src/db/schema/guide.ts",
+      "apps/api/src/db/schema/search-document.ts",
+      "apps/api/src/db/schema/search-query.ts",
+      "apps/api/src/db/schema/tag.ts",
+      "apps/api/src/db/schema/tool-tag.ts",
+      "apps/api/src/db/schema/tool.ts"
+    ],
+    "apps/api/src/testing/test-db.ts": [
+      "apps/api/src/db/schema/index.ts"
+    ],
+    "apps/api/src/app.module.ts": [
+      "apps/api/src/common/interceptors/observability.module.ts",
+      "apps/api/src/config/configuration.ts",
+      "apps/api/src/config/env.validation.ts",
+      "apps/api/src/modules/ai/ai.module.ts",
+      "apps/api/src/modules/categories/categories.module.ts",
+      "apps/api/src/modules/content-relations/content-relations.module.ts",
+      "apps/api/src/modules/database/database.module.ts",
+      "apps/api/src/modules/guides/guides.module.ts",
+      "apps/api/src/modules/health/health.module.ts",
+      "apps/api/src/modules/search/search.module.ts",
+      "apps/api/src/modules/tags/tags.module.ts",
+      "apps/api/src/modules/tools/tools.module.ts"
+    ],
+    "apps/api/src/modules/database/drizzle.service.ts": [
+      "apps/api/src/db/schema/index.ts"
+    ]
+  },
+  "excludedPatterns": [
+    "node_modules/**",
+    ".git/**",
+    "dist/**",
+    "build/**",
+    ".next/**",
+    "out/**",
+    "coverage/**",
+    "generated/**",
+    "vendor/**",
+    "tmp/**",
+    "cache/**",
+    "public/**",
+    "assets/**",
+    "static/**",
+    ".turbo/**",
+    "pnpm-lock.yaml",
+    "**/*lock*",
+    "**/*.min.*",
+    "**/*.bundle.*",
+    "**/*.{png,jpg,jpeg,gif,webp,svg,ico,mp4,mov,zip,pdf,map}",
+    "public/**",
+    "assets/**",
+    "static/**"
+  ],
+  "policySnapshot": {
+    "maxDependencyDepth": 2,
+    "maxFilesPerStep": 12,
+    "maxTotalFilesRead": 60
+  },
+  "diffSource": "git diff --name-only --cached --relative + git diff --name-only --relative + git ls-files --others --exclude-standard",
+  "diffMode": "working-tree",
+  "scope": "apps/api",
+  "scopeMode": "manual"
+}

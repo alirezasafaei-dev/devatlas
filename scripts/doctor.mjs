@@ -8,7 +8,6 @@
 
 import { execSync } from "node:child_process";
 import fs from "node:fs";
-import path from "node:path";
 
 const root = process.cwd();
 
@@ -45,16 +44,24 @@ const nodeMajor = Number(process.versions.node.split(".")[0]);
 if (nodeMajor < 18) fail("Node >=18 required");
 ok(`Node v${process.versions.node}`);
 
+function parseDotEnvKeys(pathname) {
+  return fs
+    .readFileSync(pathname, "utf8")
+    .split("\n")
+    .map(line => line.trim())
+    .filter(line => line && !line.startsWith("#"))
+    .map(line => line.split("=")[0]?.trim())
+    .filter(Boolean);
+}
+
 /* 2) packageManager */
 const pkg = readJson("package.json");
 
-if (pkg.packageManager !== "pnpm@10.33.0") {
-  fail(
-    "Incorrect pnpm version",
-    `Expected: pnpm@10.33.0 (set via corepack)`
-  );
+const expectedPackageManager = pkg.packageManager;
+if (!expectedPackageManager?.startsWith("pnpm@")) {
+  fail("packageManager must be pinned to pnpm in package.json");
 }
-ok(`packageManager: ${pkg.packageManager}`);
+ok(`packageManager: ${expectedPackageManager}`);
 
 /* 3) pnpm exists */
 run("pnpm -v", "pnpm not installed — run: corepack enable");
@@ -75,7 +82,53 @@ for (const f of required) {
   ok(f);
 }
 
-/* 5) Validate TS aliases */
+/* 5) Environment contract */
+const envTemplates = [
+  {
+    file: ".env.example",
+    requiredKeys: [
+      "NODE_ENV",
+      "PORT",
+      "APP_BASE_URL",
+      "DATABASE_URL",
+      "TEST_DATABASE_URL",
+      "CORS_ORIGIN",
+      "CONTENT_DIR",
+      "NEXT_PUBLIC_SITE_URL",
+      "NEXT_PUBLIC_API_BASE_URL",
+    ],
+  },
+  {
+    file: "apps/api/.env.example",
+    requiredKeys: [
+      "NODE_ENV",
+      "PORT",
+      "APP_BASE_URL",
+      "DATABASE_URL",
+      "TEST_DATABASE_URL",
+      "CORS_ORIGIN",
+      "CONTENT_DIR",
+    ],
+  },
+  {
+    file: "apps/web/.env.example",
+    requiredKeys: [
+      "NEXT_PUBLIC_SITE_URL",
+      "NEXT_PUBLIC_API_BASE_URL",
+    ],
+  },
+];
+
+for (const template of envTemplates) {
+  if (!fs.existsSync(template.file)) fail(`Missing env template: ${template.file}`);
+  const keys = new Set(parseDotEnvKeys(template.file));
+  for (const key of template.requiredKeys) {
+    if (!keys.has(key)) fail(`Missing ${key} in ${template.file}`);
+  }
+  ok(`${template.file} env template OK`);
+}
+
+/* 6) Validate TS aliases */
 const ts = readJson("tsconfig.base.json");
 const paths = ts.compilerOptions?.paths ?? {};
 
@@ -99,11 +152,11 @@ for (const a of aliases) {
 }
 ok("TS aliases OK");
 
-/* 6) Workspace integrity */
+/* 7) Workspace integrity */
 run("pnpm install --frozen-lockfile", "Workspace install failed");
 ok("Workspace OK");
 
-/* 7) Turbo sanity */
+/* 8) Turbo sanity */
 run("pnpm turbo run build --dry", "Turbo config invalid");
 ok("Turbo OK");
 

@@ -9,7 +9,7 @@ default:
   image: node:20-alpine
   before_script:
     - corepack enable
-    - corepack prepare pnpm@9.0.0 --activate
+    - corepack prepare pnpm@10.33.2 --activate
     - pnpm config set store-dir .pnpm-store
     - pnpm install --frozen-lockfile
 
@@ -26,11 +26,15 @@ default:
 variables:
   CI: "true"
   NODE_ENV: "test"
+  APP_BASE_URL: "http://127.0.0.1:3001"
+  DATABASE_URL: "postgresql://devatlas:devatlas@postgres:5432/devatlas?schema=public"
+  NEXT_PUBLIC_API_BASE_URL: "http://127.0.0.1:3001"
+  NEXT_PUBLIC_SITE_URL: "http://127.0.0.1:3000"
 
 prepare:
   stage: prepare
   script:
-    - pnpm health
+    - pnpm doctor
   artifacts:
     when: always
     paths:
@@ -43,7 +47,7 @@ prepare:
 lint:
   stage: lint
   script:
-    - pnpm lint
+    - pnpm verify:web
   needs:
     - prepare
   only:
@@ -54,7 +58,7 @@ lint:
 test:
   stage: test
   script:
-    - pnpm test
+    - pnpm verify:api
   needs:
     - prepare
   only:
@@ -76,6 +80,9 @@ typecheck:
 build:
   stage: build
   script:
+    - pnpm lint
+    - pnpm typecheck
+    - pnpm test
     - pnpm build
   needs:
     - lint

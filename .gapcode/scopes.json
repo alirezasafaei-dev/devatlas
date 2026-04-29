@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "defaultScopes": [
+    "apps/api",
+    "apps/web",
+    "packages/types",
+    "packages/ui"
+  ]
+}

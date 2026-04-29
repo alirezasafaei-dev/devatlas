@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GapCode Context Metrics",
+  "type": "object",
+  "required": [
+    "generatedAt",
+    "scopeMode",
+    "diffMode",
+    "changedFiles",
+    "allowedReadList",
+    "dependencyEntries",
+    "maxFilesPerStep",
+    "maxTotalFilesRead",
+    "utilization"
+  ],
+  "properties": {
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "scope": { "type": ["string", "null"] },
+    "scopeMode": { "type": "string", "enum": ["manual", "auto", "global"] },
+    "diffMode": { "type": "string" },
+    "changedFiles": { "type": "integer", "minimum": 0 },
+    "allowedReadList": { "type": "integer", "minimum": 0 },
+    "dependencyEntries": { "type": "integer", "minimum": 0 },
+    "maxFilesPerStep": { "type": "integer", "minimum": 1 },
+    "maxTotalFilesRead": { "type": "integer", "minimum": 1 },
+    "utilization": {
+      "type": "object",
+      "required": ["allowedReadListPct", "changedFilesPct"],
+      "properties": {
+        "allowedReadListPct": { "type": "number", "minimum": 0 },
+        "changedFilesPct": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}

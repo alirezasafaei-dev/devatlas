@@ -102,6 +102,7 @@ Use lightweight health checks before broad validation when relevant:
 
 - `pnpm agent:context <repo|api|web|shared>`
 - `pnpm agent:verify <target> [check...]`
+- `pnpm gapcode:bootstrap [origin/main] [--scope apps/api|apps/web|packages/*]`
 - `pnpm doctor`
 - `pnpm health`
 

@@ -1,0 +1,11 @@
+{
+  "generatedAt": "2026-04-29T10:18:23.992Z",
+  "packageManager": "pnpm",
+  "workspaceCount": 8,
+  "appCount": 2,
+  "packageCount": 6,
+  "totalEstimatedFiles": 444,
+  "totalEstimatedDirs": 124,
+  "heavyPathCount": 30,
+  "internalDependencyEdges": 4
+}

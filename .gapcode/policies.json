@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "maxFilesPerStep": 12,
+  "maxTotalFilesRead": 60,
+  "maxDependencyDepth": 2,
+  "verifyMode": "fail",
+  "largeDirFileThreshold": 200,
+  "askBeforeReadingLargeDirs": true,
+  "askBeforeReadPatterns": [
+    "pnpm-lock.yaml",
+    "**/*lock*",
+    "**/*.min.*",
+    "**/*.bundle.*",
+    "**/*.{png,jpg,jpeg,gif,webp,svg,ico,mp4,mov,zip,pdf,map}",
+    "public/**",
+    "assets/**",
+    "static/**"
+  ],
+  "alwaysIgnore": [
+    "node_modules/**",
+    ".git/**",
+    "dist/**",
+    "build/**",
+    ".next/**",
+    "out/**",
+    "coverage/**",
+    "generated/**",
+    "vendor/**",
+    "tmp/**",
+    "cache/**",
+    "public/**",
+    "assets/**",
+    "static/**",
+    ".turbo/**"
+  ],
+  "allowedBootstrapFiles": [
+    ".gapcode/context-manifest.json",
+    ".gapcode/repo-index.json",
+    ".gapcode/deps-map.json",
+    ".gapcode/heavy-paths.json",
+    "AGENTS.md",
+    "package.json",
+    "pnpm-workspace.yaml",
+    "turbo.json"
+  ],
+  "operationalModes": {
+    "analyze": [
+      "use metadata first",
+      "limit source reads to scoped files and direct deps"
+    ],
+    "implement": [
+      "start from context manifest",
+      "stop expansion once patch seam is clear"
+    ],
+    "review": [
+      "prioritize changed files",
+      "surface risks before summaries"
+    ]
+  },
+  "verifyThresholds": {
+    "allowedReadListMultiplier": 4
+  }
+}

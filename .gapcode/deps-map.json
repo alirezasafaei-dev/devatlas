@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-04-29T10:18:23.785Z",
+  "workspaceDeps": {
+    "@devatlas/api": [
+      "@devatlas/content",
+      "@devatlas/types"
+    ],
+    "@devatlas/web": [
+      "@devatlas/api-client",
+      "@devatlas/ui"
+    ],
+    "@devatlas/api-client": [],
+    "@devatlas/config": [],
+    "@devatlas/content": [],
+    "@devatlas/types": [],
+    "@devatlas/ui": [],
+    "@devatlas/utils": []
+  }
+}

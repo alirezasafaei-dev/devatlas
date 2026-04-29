@@ -69,6 +69,15 @@ type ImportedContentIndex = {
   }>;
 };
 
+type IngestSummary = {
+  categories: number;
+  tags: number;
+  guides: number;
+  tools: number;
+  relations: number;
+  searchDocuments: number;
+};
+
 const relationTypeMap: Record<ImportedRelation['relation_type'], RelationType> = {
   related: RelationType.RELATES_TO,
   prerequisite: RelationType.PREREQUISITE,
@@ -357,6 +366,16 @@ async function main(): Promise<void> {
       }
     });
 
+    const summary: IngestSummary = {
+      categories: index.categories.length,
+      tags: index.tags.length,
+      guides: index.guides.length,
+      tools: index.tools.length,
+      relations: index.relations.length,
+      searchDocuments: index.searchDocuments.length,
+    };
+
+    console.log(JSON.stringify({ event: 'content-ingest-complete', summary }));
     console.log('Content ingestion complete.');
   } finally {
     await app.close();

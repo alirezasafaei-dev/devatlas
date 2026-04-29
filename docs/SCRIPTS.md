@@ -18,8 +18,19 @@
 | `format`        | `prettier --write .`             | Format entire codebase                   |
 | `format:check`  | `prettier --check .`             | Check formatting without writing         |
 | `postinstall`   | `—`                              | No ORM engine prep needed with Drizzle   |
+| `ops:alerts`    | `node scripts/ops-alert.mjs`     | Poll `GET /api/v1/health`, evaluate runtime alerts, fail fast by severity |
+| `ingest:smoke`  | `node scripts/search-smoke.mjs --ingest-pipeline --require-positive` | Run canonical content ingest plus health/search smoke |
 | `search:smoke`  | `node scripts/search-smoke.mjs`   | Run API smoke checks and optional pipeline smoke for search |
+| `agent:ops`     | `node scripts/agent-ops.mjs`     | End-to-end local automation pass (doctor, verify, github inventory, optional deepseek/smoke) |
+| `agent:smart`   | `node scripts/agent-smart.mjs`   | Lightweight adaptive agent: doctor, lint/typecheck/test, optional smoke/deepseek |
+| `agent:auto`    | `node scripts/agent-smart.mjs`   | Alias for `agent:smart` |
+| `agent:auto:offline` | `node scripts/agent-smart.mjs --offline` | Offline-safe autonomous mode (skip remote/deepseek) |
+| `agent:tools`   | `node scripts/agent-tools-audit.mjs` | Audit immediate availability of free GitHub/quality/automation/dev/monitoring/AI capabilities |
+| `agent:preflight` | `node scripts/agent-preflight.mjs` | Combined readiness: doctor + network mode + VPS/env baseline; quick next command suggestion |
+| `agent:vps`     | `node scripts/vps-audit.mjs` | Audit VPS reachability and deploy-readiness (host/key/remote script checks) |
 | `deploy:staging` | `node scripts/deploy/staging-release.mjs` | Run the repo-driven staging deploy helper over SSH |
+| `staging:data` | `node scripts/staging-data-rehearsal.mjs` | Run staging data lifecycle rehearsal: backup, seed, smoke, rollback-plan, restore |
+| `staging:readiness` | `node scripts/staging-readiness.mjs` | Run staging deploy + optional staging data lifecycle rehearsal in one command |
 
 Examples:
 
@@ -29,14 +40,68 @@ pnpm search:smoke -- --api http://127.0.0.1:3001 --query React
 
 # run search:reindex and validate summary output too
 pnpm search:smoke -- --api http://127.0.0.1:3001 --pipeline
+
+# run content ingestion first, then health/search smoke
+CONTENT_DIR=./packages/content/src/__tests__/fixtures pnpm search:smoke -- --api http://127.0.0.1:3001 --ingest-pipeline --require-positive
+
+# canonical local ingest smoke with default fixture content
+pnpm ingest:smoke -- --api http://127.0.0.1:3001
+
+# staging data rehearsal (backup/restore is dry-run by default)
+pnpm staging:data -- --api https://staging.alirezasafeidev.ir --content-dir ./packages/content/src/__tests__/fixtures
+
+# full staging readiness drill (deploy + data rehearsal)
+pnpm staging:readiness -- --sync-remote --smoke-query React --content-dir ./packages/content/src/__tests__/fixtures
 ```
 
-Flags:
+Deployment flags:
 
 - `--api <url>`: API base URL (default `http://127.0.0.1:3001` or `API_BASE_URL`)
+- `--app-base-url <url>`: base URL injected into API jobs during `--ingest-pipeline` (default `APP_BASE_URL` or `--api`)
 - `--query <text>`: search text to execute (default `React`)
+- `--content-dir <path>`: content root for `--ingest-pipeline` (default `CONTENT_DIR` or `./packages/content/src/__tests__/fixtures`)
 - `--require-positive`: enforce `search.total > 0` in smoke result
 - `--pipeline`: runs `pnpm --filter @devatlas/api search:reindex` and validates machine-readable summary
+- `--ingest-pipeline`: runs `pnpm --filter @devatlas/api content:ingest` and validates machine-readable summary before smoke checks
+- `--insecure`: allow HTTPS requests to staging when self-signed cert is used
+
+`staging:data` flags:
+
+- `--api <url>`: API base URL for smoke checks (default `https://staging.alirezasafeidev.ir`)
+- `--content-dir <path>`: content directory for canonical `db:seed` (default `CONTENT_DIR` or `./packages/content/src/__tests__/fixtures`)
+- `--backup-file <path>`: override backup file path (default `./tmp/devatlas-staging-data-<timestamp>.sql`)
+- `--execute-backup-restore`: run real backup/restore instead of dry-run for those two steps
+- `--skip-seed`: skip `db:seed`
+- `--seed-dry-run`: dry-run only for `db:seed`
+- `--smoke-dry-run`: skip smoke checks
+- `--require-positive`: pass `--require-positive` to smoke checks
+- `--insecure`: allow HTTPS requests to staging when self-signed cert is used
+- `--keep-backup`: keep the backup file when real restore was executed
+
+`staging:readiness` flags:
+
+- `--api <url>`: API base URL for smoke checks/data rehearsal
+- `--content-dir <path>`: content directory for `staging:data` seed step
+- `--smoke-query <text>`: smoke search query (default `React`)
+- `--release-label <slug>`: release label forwarded to `deploy:staging`
+- `--ref <sha-or-tag>`: redeploy a specific ref
+- `--database-url <url>`: database URL for `staging:data`
+- `--backup-file <path>`: override backup path forwarded to `staging:data`
+- `--execute-backup-restore`: run real backup/restore in the rehearsal (default dry-run)
+- `--seed-dry-run`: dry-run `db:seed` in rehearsal
+- `--smoke-dry-run`: skip smoke checks in rehearsal
+- `--require-positive`: pass through to smoke checks
+- `--insecure`: allow HTTPS checks on self-signed staging cert
+- `--keep-backup`: keep local rehearsal backup file
+- `--skip-data-rehearsal`: skip `staging:data` stage
+- `--artifact-dir <path>`: write execution manifest (default `./tmp/staging-readiness`)
+- `--artifact-file <path>`: override manifest path
+- `--dry-run`: print commands without executing deploy/data commands
+
+Notes for `--ingest-pipeline`:
+
+- `DATABASE_URL` must be set because the ingest job writes into Postgres
+- `APP_BASE_URL` is auto-filled from `--api` when not set explicitly
 
 Staging deploy helper examples:
 
@@ -45,14 +110,35 @@ Staging deploy helper examples:
 pnpm deploy:staging -- --skip-deploy --insecure
 
 # sync remote repo snapshot on the VPS, deploy, then run public smoke checks
-pnpm deploy:staging -- --sync-remote --insecure
+pnpm deploy:staging -- --sync-remote --release-label <slug> --smoke-query React --insecure
+```
+
+Observability checks:
+
+```bash
+# external poller for staging API health alerts
+pnpm ops:alerts -- --api https://staging.alirezasafeidev.ir
+```
+
+```bash
+# machine-readable output (for CI/crons)
+pnpm ops:alerts -- --api https://staging.alirezasafeidev.ir --fail-on warn --json
 ```
 
 Flags:
 
+- `--api <url>`: API base URL (default `https://staging.alirezasafeidev.ir` or `OBS_API_URL`)
+- `--fail-on <critical|warn|none>`: fail condition (default `critical`)
+- `--timeout-ms <ms>`: request timeout for `/api/v1/health` (default `10000`)
+- `--json`: machine-readable output for alert pipelines
+- `--verbose`: print all checks (warn/info + ok)
+
+Deployment flags:
+
 - `--sync-remote`: refresh the VPS repo snapshot from remote before building
 - `--ref <git-ref>`: deploy a specific remote ref on the VPS
 - `--skip-deploy`: run smoke checks only
+- `--smoke-query <text>`: query used by built-in search smoke (`default: React`)
 - `--insecure`: allow smoke checks against the current self-signed staging cert
 
 ### Notes

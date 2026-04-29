@@ -54,4 +54,15 @@ describe('SearchService', () => {
     expect(repository.search).toHaveBeenCalledWith('React search', 5);
     expect(repository.logQuery).toHaveBeenCalledWith('React search', 1);
   });
+
+  it('returns empty results for an already-trimmed empty query without logging it', async () => {
+    await expect(service.search({ query: '', limit: 5 })).resolves.toStrictEqual({
+      query: '',
+      total: 0,
+      results: [],
+    });
+
+    expect(repository.search).toHaveBeenCalledTimes(0);
+    expect(repository.logQuery).toHaveBeenCalledTimes(0);
+  });
 });

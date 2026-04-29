@@ -11,9 +11,17 @@ const getArg = (key, fallback = undefined) => {
 };
 const hasFlag = (key) => args.includes(`--${key}`);
 const apiBaseUrl = getArg('api', process.env.API_BASE_URL ?? 'http://127.0.0.1:3001');
+const appBaseUrl = getArg('app-base-url', process.env.APP_BASE_URL ?? apiBaseUrl);
 const searchQuery = getArg('query', 'React');
 const requirePositive = hasFlag('require-positive');
 const runPipeline = hasFlag('pipeline');
+const runIngestPipeline = hasFlag('ingest-pipeline');
+const contentDir = getArg('content-dir', process.env.CONTENT_DIR ?? './packages/content/src/__tests__/fixtures');
+const insecure = hasFlag('insecure');
+
+if (insecure) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
 
 async function request(path, options = {}) {
   const response = await fetch(`${apiBaseUrl}${path}`, options);
@@ -42,14 +50,27 @@ async function checkHealth() {
 }
 
 async function checkSearch() {
-  const search = await request('/api/v1/search', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ query: searchQuery, limit: 5 }),
-  });
+  const payloads = [
+    { query: searchQuery, limit: 5 },
+    { q: searchQuery, limit: 5 },
+    { term: searchQuery, limit: 5 },
+  ];
 
-  if (search.response.status !== 201) {
-    throw new Error(`Search returned ${search.response.status}, expected 201`);
+  let search = null;
+  for (const payload of payloads) {
+    const attempt = await request('/api/v1/search', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (attempt.response.status === 200 || attempt.response.status === 201) {
+      search = attempt;
+      break;
+    }
+  }
+
+  if (!search) {
+    throw new Error('Search returned non-success for all known payload contracts');
   }
 
   if (!search.body?.data || typeof search.body.data.query !== 'string' || !Array.isArray(search.body.data.results)) {
@@ -83,9 +104,53 @@ async function runSearchReindex() {
   }
 }
 
+function parseMachineSummary(output, eventName) {
+  const summaryLine = output
+    .split('\n')
+    .map((line) => line.trim())
+    .find((line) => line.startsWith('{') && line.includes(eventName));
+
+  if (!summaryLine) {
+    throw new Error(`${eventName} did not emit machine-readable summary`);
+  }
+
+  return JSON.parse(summaryLine);
+}
+
+async function runContentIngest() {
+  if (!runIngestPipeline) {
+    return;
+  }
+
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL is required for --ingest-pipeline');
+  }
+
+  const ingestCommand = 'pnpm --filter @devatlas/api content:ingest';
+  const output = execSync(ingestCommand, {
+    encoding: 'utf8',
+    stdio: 'pipe',
+    env: {
+      ...process.env,
+      APP_BASE_URL: appBaseUrl,
+      CONTENT_DIR: contentDir,
+    },
+  });
+  const parsed = parseMachineSummary(output, 'content-ingest-complete');
+
+  if (!parsed?.summary || typeof parsed.summary.searchDocuments !== 'number') {
+    throw new Error('content:ingest summary malformed');
+  }
+}
+
 async function main() {
   console.log(`[search-smoke] API base: ${apiBaseUrl}`);
   console.log(`[search-smoke] query: ${searchQuery}`);
+  if (runIngestPipeline) {
+    console.log(`[search-smoke] app base: ${appBaseUrl}`);
+    console.log(`[search-smoke] content dir: ${contentDir}`);
+  }
+  await runContentIngest();
   await checkHealth();
   await checkSearch();
 

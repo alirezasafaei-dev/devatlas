@@ -1,0 +1,42 @@
+name: GitHub Ops Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * 1'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  audit:
+    name: Repo Automation Inventory
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.11.0'
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+
+      - name: Run agent ops audit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node scripts/agent-ops.mjs --skip-doctor --skip-verify --skip-deepseek --report /tmp/agent-ops-report.json --json | tee /tmp/agent-ops-output.log
+          cat /tmp/agent-ops-report.json
+          tail -n 5 /tmp/agent-ops-output.log
+
+      - name: Upload agent ops report
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-ops-report
+          path: |
+            /tmp/agent-ops-report.json
+            /tmp/agent-ops-output.log
+          if-no-files-found: error

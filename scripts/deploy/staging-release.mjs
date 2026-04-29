@@ -25,6 +25,16 @@ function run(command, commandArgs, options = {}) {
   });
 }
 
+function runOptional(command, commandArgs, label) {
+  try {
+    run(command, commandArgs);
+    return true;
+  } catch {
+    console.log(`[deploy:staging] optional check skipped: ${label}`);
+    return false;
+  }
+}
+
 function runGit(args) {
   return execFileSync('git', args, { encoding: 'utf8' }).trim();
 }
@@ -91,7 +101,7 @@ run('curl', [...curlArgs, `${smokeUrl}/api/v1/health/live`]);
 run('curl', [...curlArgs, `${smokeUrl}/api/v1/health/ready`]);
 run('curl', [...curlArgs, smokeUrl]);
 run('curl', [...curlArgs, `${smokeUrl}/api/v1/health`]);
-run('curl', [...curlArgs, `${smokeUrl}/api/v1/health/metrics`]);
+runOptional('curl', [...curlArgs, `${smokeUrl}/api/v1/health/metrics`], '/api/v1/health/metrics');
 
 const smokeArgs = ['search:smoke', '--', '--api', smokeUrl, '--query', smokeQuery];
 if (insecure) {

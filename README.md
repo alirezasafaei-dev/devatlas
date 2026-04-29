@@ -115,9 +115,29 @@ pnpm verify:api
 pnpm verify:web
 pnpm doctor
 pnpm health
+pnpm agent:ops
+pnpm agent:smart
+pnpm agent:auto:offline
+pnpm agent:auto
+pnpm agent:preflight
+pnpm agent:tools
+pnpm agent:vps
 ```
 
 - `pnpm verify:api` now includes `db:check` before lint/typecheck/test so schema drift is caught earlier.
+- `pnpm agent:smart` is the adaptive daily loop: local quality checks + optional smoke/deepseek
+- `pnpm agent:auto:offline` is safe when there is no internet access (no remote APIs, no DeepSeek calls).
+
+Quick mode map:
+```bash
+# local-only (default for token- and bandwidth-saving mode)
+pnpm agent:auto:offline
+# first, run a combined readiness pass and follow output
+pnpm agent:preflight --json
+
+# connected mode with review (if DEEPSEEK_API_KEY is present)
+pnpm agent:auto --deepseek --deepseek-diff HEAD~1..HEAD
+```
 
 ## Notes
 
@@ -134,3 +154,4 @@ pnpm health
 - `docs/API-CONTRACE.md`
 - `docs/STANDARDS.md`
 - `docs/SCRIPTS.md`
+- `docs/AGENT_GUIDE.md`

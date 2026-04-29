@@ -1,0 +1,295 @@
+{
+  "generatedAt": "2026-04-29T10:18:23.784Z",
+  "root": {
+    "name": "devatlas-platform",
+    "packageManager": "pnpm",
+    "workspaceTooling": [
+      "pnpm",
+      "turbo"
+    ],
+    "rootEntries": [
+      {
+        "name": ".env.example",
+        "type": "file"
+      },
+      {
+        "name": ".env.local",
+        "type": "file"
+      },
+      {
+        "name": ".env.vps",
+        "type": "file"
+      },
+      {
+        "name": ".env.vps.bak",
+        "type": "file"
+      },
+      {
+        "name": ".eslintrc.cjs",
+        "type": "file"
+      },
+      {
+        "name": ".gapcode",
+        "type": "dir"
+      },
+      {
+        "name": ".git",
+        "type": "dir"
+      },
+      {
+        "name": ".github",
+        "type": "dir"
+      },
+      {
+        "name": ".gitignore",
+        "type": "file"
+      },
+      {
+        "name": ".ignore",
+        "type": "file"
+      },
+      {
+        "name": ".nvmrc",
+        "type": "file"
+      },
+      {
+        "name": ".rgignore",
+        "type": "file"
+      },
+      {
+        "name": ".turbo",
+        "type": "dir"
+      },
+      {
+        "name": ".vscode",
+        "type": "dir"
+      },
+      {
+        "name": "AGENTS.md",
+        "type": "file"
+      },
+      {
+        "name": "apps",
+        "type": "dir"
+      },
+      {
+        "name": "CHANGELOG.md",
+        "type": "file"
+      },
+      {
+        "name": "commitlint.config.js",
+        "type": "file"
+      },
+      {
+        "name": "CONTRIBUTING.md",
+        "type": "file"
+      },
+      {
+        "name": "docs",
+        "type": "dir"
+      },
+      {
+        "name": "eslint.config.mjs",
+        "type": "file"
+      },
+      {
+        "name": "infra",
+        "type": "dir"
+      },
+      {
+        "name": "LICENSE",
+        "type": "file"
+      },
+      {
+        "name": "lighthouserc.json",
+        "type": "file"
+      },
+      {
+        "name": "next.config.ts",
+        "type": "file"
+      },
+      {
+        "name": "node_modules",
+        "type": "dir"
+      },
+      {
+        "name": "package.json",
+        "type": "file"
+      },
+      {
+        "name": "packages",
+        "type": "dir"
+      },
+      {
+        "name": "pnpm-lock.yaml",
+        "type": "file"
+      },
+      {
+        "name": "pnpm-workspace.yaml",
+        "type": "file"
+      },
+      {
+        "name": "postcss.config.mjs",
+        "type": "file"
+      },
+      {
+        "name": "README.md",
+        "type": "file"
+      },
+      {
+        "name": "scripts",
+        "type": "dir"
+      },
+      {
+        "name": "skill.toml",
+        "type": "file"
+      },
+      {
+        "name": "tests",
+        "type": "dir"
+      },
+      {
+        "name": "tsconfig.base.json",
+        "type": "file"
+      },
+      {
+        "name": "turbo.json",
+        "type": "file"
+      },
+      {
+        "name": "vitest.config.ts",
+        "type": "file"
+      }
+    ]
+  },
+  "workspaces": [
+    {
+      "name": "@devatlas/api",
+      "path": "apps/api",
+      "type": "app",
+      "keyConfigFiles": [
+        "apps/api/package.json",
+        "apps/api/tsconfig.json",
+        "apps/api/tsconfig.build.json",
+        "apps/api/vitest.config.ts",
+        "apps/api/nest-cli.json"
+      ],
+      "estimatedFileCount": 130,
+      "estimatedDirCount": 48,
+      "techHints": [
+        "nestjs",
+        "drizzle",
+        "vitest",
+        "typescript"
+      ]
+    },
+    {
+      "name": "@devatlas/web",
+      "path": "apps/web",
+      "type": "app",
+      "keyConfigFiles": [
+        "apps/web/package.json",
+        "apps/web/tsconfig.json",
+        "apps/web/vitest.config.ts"
+      ],
+      "estimatedFileCount": 64,
+      "estimatedDirCount": 38,
+      "techHints": [
+        "nextjs",
+        "react",
+        "vitest",
+        "typescript"
+      ]
+    },
+    {
+      "name": "@devatlas/api-client",
+      "path": "packages/api-client",
+      "type": "package",
+      "keyConfigFiles": [
+        "packages/api-client/package.json",
+        "packages/api-client/tsconfig.json"
+      ],
+      "estimatedFileCount": 5,
+      "estimatedDirCount": 2,
+      "techHints": [
+        "vitest",
+        "typescript"
+      ]
+    },
+    {
+      "name": "@devatlas/config",
+      "path": "packages/config",
+      "type": "package",
+      "keyConfigFiles": [
+        "packages/config/package.json",
+        "packages/config/tsconfig.json"
+      ],
+      "estimatedFileCount": 4,
+      "estimatedDirCount": 2,
+      "techHints": [
+        "vitest",
+        "typescript"
+      ]
+    },
+    {
+      "name": "@devatlas/content",
+      "path": "packages/content",
+      "type": "package",
+      "keyConfigFiles": [
+        "packages/content/package.json",
+        "packages/content/tsconfig.json"
+      ],
+      "estimatedFileCount": 44,
+      "estimatedDirCount": 12,
+      "techHints": [
+        "vitest",
+        "typescript"
+      ]
+    },
+    {
+      "name": "@devatlas/types",
+      "path": "packages/types",
+      "type": "package",
+      "keyConfigFiles": [
+        "packages/types/package.json",
+        "packages/types/tsconfig.json"
+      ],
+      "estimatedFileCount": 74,
+      "estimatedDirCount": 6,
+      "techHints": [
+        "vitest",
+        "typescript"
+      ]
+    },
+    {
+      "name": "@devatlas/ui",
+      "path": "packages/ui",
+      "type": "package",
+      "keyConfigFiles": [
+        "packages/ui/package.json",
+        "packages/ui/tsconfig.json"
+      ],
+      "estimatedFileCount": 116,
+      "estimatedDirCount": 14,
+      "techHints": [
+        "vitest",
+        "typescript"
+      ]
+    },
+    {
+      "name": "@devatlas/utils",
+      "path": "packages/utils",
+      "type": "package",
+      "keyConfigFiles": [
+        "packages/utils/package.json",
+        "packages/utils/tsconfig.json"
+      ],
+      "estimatedFileCount": 7,
+      "estimatedDirCount": 2,
+      "techHints": [
+        "vitest",
+        "typescript"
+      ]
+    }
+  ]
+}

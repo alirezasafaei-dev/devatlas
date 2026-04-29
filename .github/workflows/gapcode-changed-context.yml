@@ -1,0 +1,123 @@
+name: GapCode Changed Context
+
+on:
+  pull_request:
+
+jobs:
+  prepare-scopes:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.scopes.outputs.matrix }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.11.0'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build scopes matrix
+        id: scopes
+        run: pnpm gapcode:scopes
+
+  build-context:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.11.0'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate GapCode metadata
+        run: pnpm gapcode:index
+
+      - name: Generate PR context manifest
+        run: pnpm gapcode:context
+
+      - name: Verify PR context manifest
+        run: pnpm gapcode:verify
+
+      - name: Generate PR context metrics
+        run: pnpm gapcode:metrics
+
+      - name: Upload context manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: gapcode-context
+          path: |
+            .gapcode/context-manifest.json
+            .gapcode/context-metrics.json
+            .gapcode/repo-index.json
+            .gapcode/deps-map.json
+            .gapcode/heavy-paths.json
+            .gapcode/policies.json
+
+  build-scoped-context:
+    needs: prepare-scopes
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare-scopes.outputs.matrix) }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.11.0'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate GapCode metadata
+        run: pnpm gapcode:index
+
+      - name: Generate scoped context manifest
+        run: pnpm gapcode:context --scope ${{ matrix.scope }}
+
+      - name: Verify scoped context manifest
+        run: pnpm gapcode:verify
+
+      - name: Generate scoped context metrics
+        run: pnpm gapcode:metrics
+
+      - name: Upload scoped context manifest
+        uses: actions/upload-artifact@v4
+        with:
+          name: gapcode-context-${{ matrix.scope }}
+          path: |
+            .gapcode/context-manifest.json
+            .gapcode/context-metrics.json
+            .gapcode/repo-index.json
+            .gapcode/deps-map.json
+            .gapcode/heavy-paths.json
+            .gapcode/policies.json
