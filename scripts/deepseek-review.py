@@ -104,6 +104,38 @@ def call_chat_completion(
     return (choices[0].get("message", {}).get("content") or "").strip()
 
 
+def call_chat_completion_with_fallback(
+    base_urls: list[str],
+    model: str,
+    prompt: str,
+    max_tokens: int = 1200,
+    api_key: str = "",
+    system_prompt: str = "You are a concise technical reviewer for a TypeScript/NestJS/Next.js monorepo.",
+    timeout_seconds: int = 60,
+) -> tuple[str, str]:
+    """Try multiple compatible endpoints and return (reply, used_base)."""
+    last_error: Exception | None = None
+    attempt_timeout = min(timeout_seconds, 12)
+    for base_url in base_urls:
+        if not base_url:
+            continue
+        try:
+            answer = call_chat_completion(
+                base_url,
+                model,
+                prompt,
+                max_tokens=max_tokens,
+                api_key=api_key,
+                system_prompt=system_prompt,
+                timeout_seconds=attempt_timeout,
+            )
+            return answer, base_url
+        except Exception as exc:  # noqa: BLE001
+            last_error = exc
+            continue
+    raise RuntimeError(str(last_error) if last_error else "No local review endpoint available")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="DeepSeek code-review helper")
     parser.add_argument("--diff", default="staged", help="Diff range to review (default: staged if available, fallback HEAD~1)")
@@ -158,7 +190,10 @@ def main() -> int:
 
     payload_text = gather_payload(args, env)
     if not payload_text:
-        print("No input diff/text found for review")
+        if args.json:
+            print(json.dumps({"status": "skipped", "reason": "No input diff/text found for review"}, ensure_ascii=False))
+        else:
+            print("No input diff/text found for review")
         return 0
 
     prompt = (
@@ -182,11 +217,19 @@ def main() -> int:
             )
             model = remote_model
         else:
-            answer = call_chat_completion(
-                local_base,
+            fallback_bases = [local_base, os.environ.get("LOCAL_LLM_BASE_URL", ""), local_base]
+            # Keep deterministic order but avoid duplicate checks when both values are same.
+            deduped_bases = []
+            for value in [b for b in fallback_bases if b]:
+                if value not in deduped_bases:
+                    deduped_bases.append(value)
+
+            answer, _ = call_chat_completion_with_fallback(
+                deduped_bases,
                 local_model,
                 prompt,
-                args.max_tokens,
+                max_tokens=args.max_tokens,
+                api_key=api_key,
                 timeout_seconds=timeout_seconds,
             )
             model = local_model

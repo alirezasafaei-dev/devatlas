@@ -46,6 +46,7 @@ coverage/
 storybook-static/
 .nyc_output
 /artifacts
+tmp/
 
 # --- OS & IDEs ---
 .DS_Store

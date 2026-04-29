@@ -123,11 +123,19 @@ async function main() {
       steps.push('smoke:ok');
     }
 
-    if (!isCI) {
+    if (!isCI && !noApi) {
       run('pnpm agent:github status --json', 'GitHub status (local + remote if token)');
       steps.push('github:status:ok');
       run('pnpm agent:inventory', 'Automation inventory');
       steps.push('inventory:ok');
+    } else if (noApi) {
+      console.log('\nℹ github checks skipped (--no-api)');
+      steps.push('github:status:skipped');
+      steps.push('inventory:skipped');
+    } else {
+      console.log('\nℹ github checks skipped (CI mode)');
+      steps.push('github:status:skipped');
+      steps.push('inventory:skipped');
     }
 
     if (includeDeepseek && networkOk && hasDeepseek && !isCI) {

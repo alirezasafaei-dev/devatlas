@@ -22,6 +22,7 @@
 | `ingest:smoke`  | `node scripts/search-smoke.mjs --ingest-pipeline --require-positive` | Run canonical content ingest plus health/search smoke |
 | `search:smoke`  | `node scripts/search-smoke.mjs`   | Run API smoke checks and optional pipeline smoke for search |
 | `agent:ops`     | `node scripts/agent-ops.mjs`     | End-to-end local automation pass (doctor, verify, github inventory, optional deepseek/smoke) |
+| `agent:autopilot` | `pnpm doctor && pnpm agent:github status --json && pnpm agent:inventory --json` | Lightweight startup pass for local-first continuity after each shift |
 | `agent:smart`   | `node scripts/agent-smart.mjs`   | Lightweight adaptive agent: doctor, lint/typecheck/test, optional smoke/deepseek |
 | `agent:auto`    | `node scripts/agent-smart.mjs`   | Alias for `agent:smart` |
 | `agent:auto:offline` | `node scripts/agent-smart.mjs --offline` | Offline-safe autonomous mode (skip remote/deepseek) |
@@ -30,8 +31,10 @@
 | `agent:local:embed` | `node scripts/local-llm.mjs embed` | Start the local embedding server with `bge-m3.gguf` |
 | `agent:local:smoke` | `node scripts/local-llm.mjs smoke` | Verify that the local chat endpoint is ready |
 | `agent:local:smoke:embed` | `node scripts/local-llm.mjs smoke --mode=embed` | Verify that the local embedding endpoint is ready |
+| `agent:devflow` | `node scripts/agent-devflow.mjs` | Central scoped hook/review/context orchestrator for local development |
+| `agent:devflow:install-hooks` | `node scripts/agent-devflow.mjs install-hooks` | Install `.githooks` and set `core.hooksPath` |
 | `agent:offline:install` | `bash scripts/install-offline-ai-services.sh` | Install user services and timers for offline AI automation |
-| `agent:offline:review:last` | `cat tmp/offline-review-latest.json` | Read the latest daily offline review output |
+| `agent:offline:review:last` | `cat tmp/agent-devflow/review-latest.json` | Read the latest offline review artifact |
 | `agent:tools`   | `node scripts/agent-tools-audit.mjs` | Audit immediate availability of free GitHub/quality/automation/dev/monitoring/AI capabilities |
 | `agent:preflight` | `node scripts/agent-preflight.mjs` | Combined readiness: doctor + network mode + VPS/env baseline; quick next command suggestion |
 | `agent:vps`     | `node scripts/vps-audit.mjs` | Audit VPS reachability and deploy-readiness (host/key/remote script checks) |
@@ -114,7 +117,8 @@ Offline AI notes:
 
 - `agent:local:chat` uses `llama.cpp` + Vulkan and is tuned for the local AMD RX 580.
 - `agent:deepseek:local` defaults to `LOCAL_REVIEW_BASE_URL` and `LOCAL_REVIEW_MODEL` when present in `.env.local`.
-- `agent:offline:install` installs `systemd --user` services for `Ollama`, `llama.cpp`, a 30-minute smoke timer, and a daily local review timer.
+- `agent:devflow` derives API/Web/Shared scope from changed files, writes reports under `tmp/agent-devflow/` and `artifacts/agent-devflow/`, and powers the Git hooks.
+- `agent:offline:install` installs `systemd --user` services for `Ollama`, `llama.cpp`, a 30-minute smoke timer, a daily local review timer, and enables `.githooks`.
 
 Staging deploy helper examples:
 

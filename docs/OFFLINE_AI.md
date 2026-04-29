@@ -60,8 +60,9 @@ This installs:
 
 - `devatlas-ollama.service`: keeps `Ollama` running with Vulkan enabled
 - `devatlas-llama-chat.service`: keeps the `llama.cpp` chat server running
+- `devatlas-llama-embed.service`: keeps the local embedding server running
 - `devatlas-offline-health.timer`: runs `pnpm agent:local:smoke` every 30 minutes
-- `devatlas-offline-review.timer`: runs a daily local review and writes `tmp/offline-review-latest.json`
+- `devatlas-offline-review.timer`: runs a daily local review via `agent:devflow` and writes `tmp/agent-devflow/review-latest.json`
 
 Read the latest offline review:
 
@@ -74,6 +75,7 @@ Inspect status:
 ```bash
 systemctl --user status devatlas-ollama.service
 systemctl --user status devatlas-llama-chat.service
+systemctl --user status devatlas-llama-embed.service
 systemctl --user list-timers --all | grep devatlas-offline
 ```
 
@@ -106,3 +108,4 @@ Important variables in `.env.local`:
 - `llama.cpp` chat startup can take some time because the model is loaded into GPU memory.
 - The default daily review uses the local `qwen2.5-coder:7b` model via `Ollama`.
 - The health timer is intentionally lightweight and only checks that the local chat endpoint responds.
+- `agent:offline:install` also points Git to `.githooks/` so the smart `pre-commit` and `pre-push` hooks stay active.

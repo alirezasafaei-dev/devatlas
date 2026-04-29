@@ -55,10 +55,27 @@ RestartSec=5
 WantedBy=default.target
 EOF
 
+cat > "${SYSTEMD_USER_DIR}/devatlas-llama-embed.service" <<EOF
+[Unit]
+Description=DevAtlas llama.cpp local embedding service
+After=devatlas-ollama.service
+
+[Service]
+Type=simple
+WorkingDirectory=${ROOT}
+EnvironmentFile=-${ROOT}/.env.local
+ExecStart=/usr/bin/env pnpm agent:local:embed
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
+EOF
+
 cat > "${SYSTEMD_USER_DIR}/devatlas-offline-health.service" <<EOF
 [Unit]
 Description=DevAtlas offline AI smoke check
-After=devatlas-ollama.service devatlas-llama-chat.service
+After=devatlas-ollama.service devatlas-llama-chat.service devatlas-llama-embed.service
 
 [Service]
 Type=oneshot
@@ -89,7 +106,7 @@ After=devatlas-ollama.service
 Type=oneshot
 WorkingDirectory=${ROOT}
 EnvironmentFile=-${ROOT}/.env.local
-ExecStart=/usr/bin/env bash -lc 'mkdir -p tmp && python3 scripts/deepseek-review.py --provider local --timeout-seconds 180 --diff HEAD~1..HEAD --json > tmp/offline-review-latest.json || true'
+ExecStart=/usr/bin/env bash -lc 'pnpm agent:devflow review --diff head || true'
 EOF
 
 cat > "${SYSTEMD_USER_DIR}/devatlas-offline-review.timer" <<EOF
@@ -108,8 +125,11 @@ EOF
 systemctl --user daemon-reload
 systemctl --user enable --now devatlas-ollama.service
 systemctl --user enable --now devatlas-llama-chat.service
+systemctl --user enable --now devatlas-llama-embed.service
 systemctl --user enable --now devatlas-offline-health.timer
 systemctl --user enable --now devatlas-offline-review.timer
+
+git config core.hooksPath .githooks
 
 echo "Installed offline AI services and timers."
 systemctl --user --no-pager --full status devatlas-ollama.service devatlas-llama-chat.service || true

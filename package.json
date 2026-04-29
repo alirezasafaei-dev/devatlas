@@ -32,6 +32,7 @@
     "agent:smart": "node scripts/agent-smart.mjs",
     "agent:auto": "node scripts/agent-smart.mjs",
     "agent:auto:offline": "node scripts/agent-smart.mjs --offline",
+    "agent:auto:lean": "AGENT_LOW_TOKEN_MODE=1 pnpm agent:auto --offline --no-api --json && (pnpm agent:devflow review --diff staged --timeout-seconds 60 --json || true)",
     "gapcode:index": "node scripts/gapcode-index.mjs",
     "gapcode:index:metrics": "node scripts/gapcode-index-metrics.mjs",
     "gapcode:bootstrap": "node scripts/gapcode-bootstrap.mjs",
@@ -56,8 +57,10 @@
     "agent:local:embed": "node scripts/local-llm.mjs embed",
     "agent:local:smoke": "node scripts/local-llm.mjs smoke",
     "agent:local:smoke:embed": "node scripts/local-llm.mjs smoke --mode=embed",
+    "agent:devflow": "node scripts/agent-devflow.mjs",
+    "agent:devflow:install-hooks": "node scripts/agent-devflow.mjs install-hooks",
     "agent:offline:install": "bash scripts/install-offline-ai-services.sh",
-    "agent:offline:review:last": "cat tmp/offline-review-latest.json"
+    "agent:offline:review:last": "cat tmp/agent-devflow/review-latest.json"
   },
   "devDependencies": {
     "@commitlint/cli": "20.5.0",

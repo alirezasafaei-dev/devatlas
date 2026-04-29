@@ -5,6 +5,9 @@ import fs from 'node:fs';
 
 const argv = process.argv.slice(2);
 const outputJson = argv.includes('--json') || argv.includes('-j');
+const preferOffline = argv.includes('--low-token') ||
+  process.env.AGENT_LOW_TOKEN_MODE === '1' ||
+  process.env.AGENT_LOW_TOKEN_MODE === 'true';
 
 function parseLocalEnv(filePath) {
   const env = new Map();
@@ -73,8 +76,10 @@ async function main() {
   };
 
   if (internet === 'online') {
-    report.recommendedMode = hasToken ? 'online' : 'offline';
-    report.recommendedCommand = hasToken ? 'pnpm agent:auto --deepseek --deepseek-diff HEAD~1..HEAD' : 'pnpm agent:auto:offline';
+    if (!preferOffline) {
+      report.recommendedMode = hasToken ? 'online' : 'offline';
+      report.recommendedCommand = hasToken ? 'pnpm agent:auto --deepseek --deepseek-diff HEAD~1..HEAD' : 'pnpm agent:auto:offline';
+    }
     if (!hasToken) {
       report.recommendations.unshift('No GitHub token detected: set GITHUB_TOKEN or GH_TOKEN for remote workflow checks.');
     }
@@ -86,6 +91,12 @@ async function main() {
     }
   } else {
     report.toolsSummary.internet = 'offline';
+  }
+
+  if (preferOffline) {
+    report.recommendations.unshift('Low-token mode active (AGENT_LOW_TOKEN_MODE=1): remote checks and DeepSeek calls are skipped.');
+    report.recommendedMode = 'offline';
+    report.recommendedCommand = 'pnpm agent:auto:offline';
   }
 
   if (outputJson) {

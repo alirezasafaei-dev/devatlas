@@ -42,6 +42,16 @@
 - هر تغییر shared باید نزدیک ترین consumer را هم validate کند.
 - اگر یک مورد در roadmap معیار قابل اندازه گیری ندارد، هنوز آماده اجرا نیست.
 
+## 2.1) استمرار کار وقتی نظارت مستقیم نیست
+
+- هر روز به‌محض شروع، دستور `pnpm agent:preflight --json` را اجرا کنید تا حالت (offline/online) تعیین شود.
+- مسیر پیش‌فرض توسعه:
+  - `pnpm agent:auto:offline` یا `pnpm agent:auto --deepseek --deepseek-diff HEAD~1..HEAD` بسته به پیشنهاد `preflight`.
+  - سپس `pnpm agent:autopilot` و ذخیره خروجی برای audit جلسه.
+- قبل از اینکه هر آیتم roadmap تغییر کند، ابتدا `docs/ROADMAP.md` آیتم مربوط را به‌روزرسانی کنید (`InProgress` / `Blocked` / `Done`) و معیار پذیرش را حفظ کنید.
+- اگر تغییر روی contracts باشد، `pnpm agent:deepseek:local --file <file>` برای بازبینی سریع و رایگان انجام شود.
+- هیچ مرحله‌ای به‌صورت «خالی» (بدون خروجی verify یا artifact) انجام نشود؛ خروجی را در `tmp/agent-*` بگذارید تا پیگیری امکان‌پذیر باشد.
+
 ---
 
 ## 3) ترتیب واقعی اجرا
