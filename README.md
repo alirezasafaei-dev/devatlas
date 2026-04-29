@@ -1,5 +1,9 @@
 # DevAtlas Platform
 
+<p align="center">
+  <img src="./assets/repo-preview.svg" alt="DevAtlas preview" width="100%" />
+</p>
+
 DevAtlas یک monorepo مبتنی بر `pnpm` و `turbo` برای یک پلتفرم محتوای فنی است. وضعیت فعلی پروژه روی دو اپ عملیاتی و چند پکیج مشترک متمرکز است:
 
 - `@devatlas/web` — فرانت‌اند عمومی با Next.js 16 و React 19
@@ -115,6 +119,7 @@ pnpm verify:api
 pnpm verify:web
 pnpm doctor
 pnpm health
+pnpm agent:autopilot
 pnpm agent:ops
 pnpm agent:smart
 pnpm agent:auto:offline
@@ -160,4 +165,5 @@ pnpm agent:auto --deepseek --deepseek-diff HEAD~1..HEAD
 - `docs/STANDARDS.md`
 - `docs/SCRIPTS.md`
 - `docs/AGENT_GUIDE.md`
+- `docs/CONTINUATION_PLAYBOOK.md`
 - `docs/OFFLINE_AI.md`
