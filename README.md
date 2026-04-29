@@ -122,11 +122,16 @@ pnpm agent:auto
 pnpm agent:preflight
 pnpm agent:tools
 pnpm agent:vps
+pnpm agent:local:chat
+pnpm agent:deepseek:local --file package.json --json
+pnpm agent:offline:install
 ```
 
 - `pnpm verify:api` now includes `db:check` before lint/typecheck/test so schema drift is caught earlier.
 - `pnpm agent:smart` is the adaptive daily loop: local quality checks + optional smoke/deepseek
 - `pnpm agent:auto:offline` is safe when there is no internet access (no remote APIs, no DeepSeek calls).
+- `pnpm agent:deepseek:local` runs code review against the local offline model instead of the hosted DeepSeek API.
+- `pnpm agent:offline:install` installs user services and timers for local offline AI automation.
 
 Quick mode map:
 ```bash
@@ -155,3 +160,4 @@ pnpm agent:auto --deepseek --deepseek-diff HEAD~1..HEAD
 - `docs/STANDARDS.md`
 - `docs/SCRIPTS.md`
 - `docs/AGENT_GUIDE.md`
+- `docs/OFFLINE_AI.md`

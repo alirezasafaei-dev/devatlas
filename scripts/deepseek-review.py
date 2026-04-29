@@ -67,6 +67,7 @@ def call_chat_completion(
     max_tokens: int = 1200,
     api_key: str = "",
     system_prompt: str = "You are a concise technical reviewer for a TypeScript/NestJS/Next.js monorepo.",
+    timeout_seconds: int = 60,
 ) -> str:
     url = f"{base_url.rstrip('/')}/chat/completions"
     headers = {
@@ -93,7 +94,7 @@ def call_chat_completion(
 
     data = json.dumps(body).encode("utf-8")
     req = urllib.request.Request(url, data=data, headers=headers, method="POST")
-    with urllib.request.urlopen(req, timeout=60) as response:
+    with urllib.request.urlopen(req, timeout=timeout_seconds) as response:
         payload = json.loads(response.read().decode("utf-8"))
 
     choices = payload.get("choices", [])
@@ -113,6 +114,7 @@ def main() -> int:
     parser.add_argument("--max-tokens", type=int, default=1200)
     parser.add_argument("--provider", default="auto", choices=["auto", "deepseek", "local"])
     parser.add_argument("--local-base", default="", help="Optional override for local OpenAI-compatible base URL")
+    parser.add_argument("--timeout-seconds", type=int, default=0, help="HTTP timeout for remote or local model calls")
     args = parser.parse_args()
 
     env = parse_env_file(ROOT / ".env.local")
@@ -134,6 +136,13 @@ def main() -> int:
         or "qwen3-4b-thinking"
     )
     remote_model = args.model or os.environ.get("DEEPSEEK_MODEL") or env.get("DEEPSEEK_MODEL") or "deepseek-chat"
+    timeout_seconds = args.timeout_seconds or int(
+        os.environ.get("LOCAL_REVIEW_TIMEOUT_SECONDS")
+        or env.get("LOCAL_REVIEW_TIMEOUT_SECONDS")
+        or os.environ.get("DEEPSEEK_TIMEOUT_SECONDS")
+        or env.get("DEEPSEEK_TIMEOUT_SECONDS")
+        or "60"
+    )
 
     provider = args.provider
     if provider == "auto":
@@ -169,6 +178,7 @@ def main() -> int:
                 prompt,
                 args.max_tokens,
                 api_key=api_key,
+                timeout_seconds=timeout_seconds,
             )
             model = remote_model
         else:
@@ -177,6 +187,7 @@ def main() -> int:
                 local_model,
                 prompt,
                 args.max_tokens,
+                timeout_seconds=timeout_seconds,
             )
             model = local_model
     except Exception as exc:

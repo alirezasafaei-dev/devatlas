@@ -55,7 +55,9 @@
     "agent:local:chat": "node scripts/local-llm.mjs chat",
     "agent:local:embed": "node scripts/local-llm.mjs embed",
     "agent:local:smoke": "node scripts/local-llm.mjs smoke",
-    "agent:local:smoke:embed": "node scripts/local-llm.mjs smoke --mode=embed"
+    "agent:local:smoke:embed": "node scripts/local-llm.mjs smoke --mode=embed",
+    "agent:offline:install": "bash scripts/install-offline-ai-services.sh",
+    "agent:offline:review:last": "cat tmp/offline-review-latest.json"
   },
   "devDependencies": {
     "@commitlint/cli": "20.5.0",

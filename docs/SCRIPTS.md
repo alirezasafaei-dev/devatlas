@@ -25,6 +25,13 @@
 | `agent:smart`   | `node scripts/agent-smart.mjs`   | Lightweight adaptive agent: doctor, lint/typecheck/test, optional smoke/deepseek |
 | `agent:auto`    | `node scripts/agent-smart.mjs`   | Alias for `agent:smart` |
 | `agent:auto:offline` | `node scripts/agent-smart.mjs --offline` | Offline-safe autonomous mode (skip remote/deepseek) |
+| `agent:deepseek:local` | `python3 scripts/deepseek-review.py --provider local` | Run local offline review using the configured OpenAI-compatible local model |
+| `agent:local:chat` | `node scripts/local-llm.mjs chat` | Start the local `llama.cpp` chat server on the configured GPU |
+| `agent:local:embed` | `node scripts/local-llm.mjs embed` | Start the local embedding server with `bge-m3.gguf` |
+| `agent:local:smoke` | `node scripts/local-llm.mjs smoke` | Verify that the local chat endpoint is ready |
+| `agent:local:smoke:embed` | `node scripts/local-llm.mjs smoke --mode=embed` | Verify that the local embedding endpoint is ready |
+| `agent:offline:install` | `bash scripts/install-offline-ai-services.sh` | Install user services and timers for offline AI automation |
+| `agent:offline:review:last` | `cat tmp/offline-review-latest.json` | Read the latest daily offline review output |
 | `agent:tools`   | `node scripts/agent-tools-audit.mjs` | Audit immediate availability of free GitHub/quality/automation/dev/monitoring/AI capabilities |
 | `agent:preflight` | `node scripts/agent-preflight.mjs` | Combined readiness: doctor + network mode + VPS/env baseline; quick next command suggestion |
 | `agent:vps`     | `node scripts/vps-audit.mjs` | Audit VPS reachability and deploy-readiness (host/key/remote script checks) |
@@ -102,6 +109,12 @@ Notes for `--ingest-pipeline`:
 
 - `DATABASE_URL` must be set because the ingest job writes into Postgres
 - `APP_BASE_URL` is auto-filled from `--api` when not set explicitly
+
+Offline AI notes:
+
+- `agent:local:chat` uses `llama.cpp` + Vulkan and is tuned for the local AMD RX 580.
+- `agent:deepseek:local` defaults to `LOCAL_REVIEW_BASE_URL` and `LOCAL_REVIEW_MODEL` when present in `.env.local`.
+- `agent:offline:install` installs `systemd --user` services for `Ollama`, `llama.cpp`, a 30-minute smoke timer, and a daily local review timer.
 
 Staging deploy helper examples:
 
