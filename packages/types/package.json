@@ -19,14 +19,14 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "zod": "3.25.76"
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "tsup": "8.5.1",
-    "typescript": "5.9.3",
-    "eslint": "9.39.4",
-    "@typescript-eslint/eslint-plugin": "8.59.0",
-    "@typescript-eslint/parser": "8.59.0",
-    "vitest": "3.2.4"
+    "typescript": "6.0.3",
+    "eslint": "10.3.0",
+    "@typescript-eslint/eslint-plugin": "8.59.2",
+    "@typescript-eslint/parser": "8.59.2",
+    "vitest": "4.1.5"
   }
 }
